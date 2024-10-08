@@ -1,42 +1,95 @@
 import os
 
-# Função sem retorno.
-def logoSenai():
+# Função para limpar a tela e exibir o logo
+def logo_senai():
     os.system("cls || clear")
     print("=== SENAI === ")
 
+# Função para calcular o IMC
+def calcular_imc(peso, altura):
+    return peso / (altura ** 2)
+
+# Função para interpretar o IMC
+def interpretar_imc(imc):
+    if imc < 18.5:
+        return "Abaixo do peso"
+    elif 18.5 <= imc < 25:
+        return "Peso normal"
+    elif 25 <= imc < 30:
+        return "Sobrepeso"
+    elif 30 <= imc < 35:
+        return "Obesidade grau I"
+    elif 35 <= imc < 40:
+        return "Obesidade grau II"
+    else:
+        return "Obesidade grau III (mórbida)"
+
+# Função para solicitar dados do usuário
+def coletar_dados():
+    nome = input("Digite o nome do usuário (ou digite 'sair' para encerrar): ")
+    if nome.lower() == 'sair':
+        return None  # Indica que o usuário deseja sair
+
+    sobrenome = input("Digite o sobrenome do usuário: ")
+    idade = input("Digite a idade do usuário: ")
+    altura = input("Digite a altura do usuário (em metros): ")
+    peso = input("Digite o peso do usuário (em quilogramas): ")
+
+    # Verificações de validação
+    if not idade.isdigit() or not altura.replace('.', '', 1).isdigit() or not peso.replace('.', '', 1).isdigit():
+        print("Por favor, insira valores válidos para idade, altura e peso.")
+        return None
+
+    idade = int(idade)
+    altura = float(altura)
+    peso = float(peso)
+
+    # Verificando se os valores são positivos
+    if idade < 0 or altura <= 0 or peso <= 0:
+        print("Idade, altura e peso devem ser valores positivos.")
+        return None
+
+    return nome, sobrenome, idade, altura, peso
+
+# Função para exibir os dados armazenados
+def exibir_dados(nomes, sobrenomes, idades, alturas, pesos):
+    logo_senai()
+    print("\nDados dos usuários:")
+    for i in range(len(nomes)):
+        imc = calcular_imc(pesos[i], alturas[i])
+        situacao = interpretar_imc(imc)
+        nome_completo = f"{nomes[i]} {sobrenomes[i]}"
+        
+        print(f"Usuário {i+1}:")
+        print("Nome completo:", nome_completo)
+        print("Idade:", idades[i])
+        print("Altura:", alturas[i], "metros")
+        print("Peso:", pesos[i], "quilogramas")
+        print("IMC:", round(imc, 2))
+        print("Situação:", situacao)
+        print()
+
 # Definindo listas vazias para armazenar os dados dos usuários
 nomes = []
+sobrenomes = []
 idades = []
 alturas = []
 pesos = []
 
 # Solicitando os dados dos usuários em um loop
 while True:
-    logoSenai()
-    nome = input("Digite o nome do usuário (ou digite 'sair' para encerrar): ")
+    logo_senai()
+    dados = coletar_dados()
     
-    # Verificando se o usuário quer sair
-    if nome.lower() == 'sair':
-        break
-    
-    idade = int(input("Digite a idade do usuário: "))
-    altura = float(input("Digite a altura do usuário (em metros): "))
-    peso = float(input("Digite o peso do usuário (em quilogramas): "))
-    
+    if dados is None:
+        continue  # Continua o loop se a coleta de dados falhar
+
     # Adicionando os dados às listas
-    nomes.append(nome)
-    idades.append(idade)
-    alturas.append(altura)
-    pesos.append(peso)
+    nomes.append(dados[0])
+    sobrenomes.append(dados[1])
+    idades.append(dados[2])
+    alturas.append(dados[3])
+    pesos.append(dados[4])
 
 # Exibindo os dados armazenados
-logoSenai()
-print("\nDados dos usuários:")
-for i in range(len(nomes)):
-    print(f"Usuário {i+1}:")
-    print("Nome:", nomes[i])
-    print("Idade:", idades[i])
-    print("Altura:", alturas[i], "metros")
-    print("Peso:", pesos[i], "quilogramas")
-    print()
+exibir_dados(nomes, sobrenomes, idades, alturas, pesos)
